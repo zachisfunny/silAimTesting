@@ -114,15 +114,7 @@ function CalculateChance(Percentage)
 end
 
 
---[[file handling]] do 
-    if not isfolder(MainFileName) then 
-        makefolder(MainFileName);
-    end
-    
-    if not isfolder(string.format("%s/%s", MainFileName, tostring(game.PlaceId))) then 
-        makefolder(string.format("%s/%s", MainFileName, tostring(game.PlaceId)))
-    end
-end
+
 
 local Files = listfiles(string.format("%s/%s", "UniversalSilentAim", tostring(game.PlaceId)))
 
