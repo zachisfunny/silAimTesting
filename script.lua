@@ -240,7 +240,7 @@ local function getClosestPlayer()
 end
 
 -- ui creating & handling
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zachisfunny/LinoriaLib/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zachisfunny/silAimTesting/main/lib.lua"))()
 Library:SetWatermark("Universal Silent Aim Method Testing")
 
 local Window = Library:CreateWindow("Universal Silent Aim Method Testing")
