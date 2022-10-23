@@ -28,10 +28,10 @@ local Library = {
     HudRegistry = {};
 
     FontColor = Color3.fromRGB(255, 255, 255);
-    MainColor = Color3.fromRGB(28, 28, 28);
-    BackgroundColor = Color3.fromRGB(20, 20, 20);
+    MainColor = Color3.fromRGB(15, 15, 15);
+    BackgroundColor = Color3.fromRGB(30, 30, 30);
     AccentColor = Color3.fromRGB(0, 85, 255);
-    OutlineColor = Color3.fromRGB(50, 50, 50);
+    OutlineColor = Color3.fromRGB(20, 20, 20);
 
     Black = Color3.new(0, 0, 0);
 
@@ -1053,7 +1053,7 @@ do
         return Label;
     end;
 
-    function Funcs:AddButton(Text, Func)
+function Funcs:AddButton(Text, Func)
         local Button = {};
 
         local Groupbox = self;
@@ -2008,13 +2008,13 @@ do
         function Dropdown:OpenDropdown()
             ListOuter.Visible = true;
             Library.OpenedFrames[ListOuter] = true;
-            DropdownArrow.Rotation = 180;
+            DropdownArrow.Rotation = 0;
         end;
 
         function Dropdown:CloseDropdown()
             ListOuter.Visible = false;
             Library.OpenedFrames[ListOuter] = nil;
-            DropdownArrow.Rotation = 0;
+            DropdownArrow.Rotation = 180;
         end;
 
         function Dropdown:OnChanged(Func)
@@ -2454,7 +2454,7 @@ function Library:CreateWindow(...)
     });
 
     Library:Create('UIListLayout', {
-        Padding = UDim.new(0, 0);
+        Padding = UDim.new(0, 7.5);
         FillDirection = Enum.FillDirection.Horizontal;
         SortOrder = Enum.SortOrder.LayoutOrder;
         Parent = TabArea;
@@ -2920,7 +2920,7 @@ function Library:CreateWindow(...)
             if Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name == Library.ToggleKeybind.Value then
                 task.spawn(Library.Toggle)
             end
-        elseif Input.KeyCode == Enum.KeyCode.End or Enum.KeyCode.RightAlt or (Input.KeyCode == Enum.KeyCode.End and (not Processed)) then
+        elseif Input.KeyCode == Enum.KeyCode.RightAlt or (Input.KeyCode == Enum.KeyCode.End and (not Processed)) then
             task.spawn(Library.Toggle)
         end
     end))
