@@ -11,7 +11,7 @@ local SilentAimSettings = {
     Enabled = false,
     
     ClassName = "Universal Silent Aim Method Testing",
-    ToggleKey = "RightAlt",
+    ToggleKey = "",
     
     TeamCheck = false,
     VisibleCheck = false, 
@@ -240,7 +240,7 @@ local function getClosestPlayer()
 end
 
 -- ui creating & handling
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zachisfunny/silAimTesting/main/lib.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zachisfunny/LinoriaLib/main/Library.lua"))()
 Library:SetWatermark("Universal Silent Aim Method Testing")
 
 local Window = Library:CreateWindow("Universal Silent Aim Method Testing")
@@ -248,7 +248,7 @@ local GeneralTab = Window:AddTab("General")
 local MainBOX = GeneralTab:AddLeftTabbox("Main") do
     local Main = MainBOX:AddTab("Main")
     
-    Main:AddToggle("aim_Enabled", {Text = "Enabled"}):AddKeyPicker("aim_Enabled_KeyPicker", {Default = "RightAlt", SyncToggleState = true, Mode = "Toggle", Text = "Enabled", NoUI = false});
+    Main:AddToggle("aim_Enabled", {Text = "Enabled"}):AddKeyPicker("aim_Enabled_KeyPicker", {Default = "", SyncToggleState = true, Mode = "Toggle", Text = "Enabled", NoUI = false});
     Options.aim_Enabled_KeyPicker:OnClick(function()
         SilentAimSettings.Enabled = not SilentAimSettings.Enabled
         
