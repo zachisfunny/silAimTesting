@@ -10,7 +10,7 @@ end
 local SilentAimSettings = {
     Enabled = false,
     
-    ClassName = "Silent Aim Method Testing",
+    ClassName = "Universal Silent Aim Method Testing",
     ToggleKey = "RightAlt",
     
     TeamCheck = false,
@@ -29,7 +29,8 @@ local SilentAimSettings = {
 
 -- variables
 getgenv().SilentAimSettings = Settings
-
+local MainFileName = "UniversalSilentAim"
+local SelectedFile, FileToSave = "", ""
 
 local Camera = workspace.CurrentCamera
 local Players = game:GetService("Players")
@@ -114,10 +115,64 @@ function CalculateChance(Percentage)
 end
 
 
+--[[file handling]] do 
+    if not isfolder(MainFileName) then 
+        makefolder(MainFileName);
+    end
+    
+    if not isfolder(string.format("%s/%s", MainFileName, tostring(game.PlaceId))) then 
+        makefolder(string.format("%s/%s", MainFileName, tostring(game.PlaceId)))
+    end
+end
 
-
+local Files = listfiles(string.format("%s/%s", "UniversalSilentAim", tostring(game.PlaceId)))
 
 -- functions
+local function GetFiles() -- credits to the linoria lib for this function, listfiles returns the files full path and its annoying
+	local out = {}
+	for i = 1, #Files do
+		local file = Files[i]
+		if file:sub(-4) == '.lua' then
+			-- i hate this but it has to be done ...
+
+			local pos = file:find('.lua', 1, true)
+			local start = pos
+
+			local char = file:sub(pos, pos)
+			while char ~= '/' and char ~= '\\' and char ~= '' do
+				pos = pos - 1
+				char = file:sub(pos, pos)
+			end
+
+			if char == '/' or char == '\\' then
+				table.insert(out, file:sub(pos + 1, start - 1))
+			end
+		end
+	end
+	
+	return out
+end
+
+local function UpdateFile(FileName)
+    assert(FileName or FileName == "string", "oopsies");
+    writefile(string.format("%s/%s/%s.lua", MainFileName, tostring(game.PlaceId), FileName), HttpService:JSONEncode(SilentAimSettings))
+end
+
+local function LoadFile(FileName)
+    assert(FileName or FileName == "string", "oopsies");
+    
+    local File = string.format("%s/%s/%s.lua", MainFileName, tostring(game.PlaceId), FileName)
+    local ConfigData = HttpService:JSONDecode(readfile(File))
+    for Index, Value in next, ConfigData do
+        SilentAimSettings[Index] = Value
+    end
+end
+
+local function getPositionOnScreen(Vector)
+    local Vec3, OnScreen = WorldToScreen(Camera, Vector)
+    return Vector2.new(Vec3.X, Vec3.Y), OnScreen
+end
+
 local function ValidateArguments(Args, RayMethod)
     local Matches = 0
     if #Args < RayMethod.ArgCountRequired then
@@ -257,6 +312,54 @@ local FieldOfViewBOX = GeneralTab:AddLeftTabbox("Field Of View") do
     PredictionTab:AddSlider("Amount", {Text = "Prediction Amount", Min = 0.165, Max = 1, Default = 0.165, Rounding = 3}):OnChanged(function()
         PredictionAmount = Options.Amount.Value
         SilentAimSettings.MouseHitPredictionAmount = Options.Amount.Value
+    end)
+end
+
+local CreateConfigurationBOX = GeneralTab:AddRightTabbox("Create Configuration") do 
+    local Main = CreateConfigurationBOX:AddTab("Create Configuration")
+    
+    Main:AddInput("CreateConfigTextBox", {Default = "", Numeric = false, Finished = false, Text = "Create Configuration to Create", Tooltip = "Creates a configuration file containing settings you can save and load", Placeholder = "File Name here"}):OnChanged(function()
+        if Options.CreateConfigTextBox.Value and string.len(Options.CreateConfigTextBox.Value) ~= "" then 
+            FileToSave = Options.CreateConfigTextBox.Value
+        end
+    end)
+    
+    Main:AddButton("Create Configuration File", function()
+        if FileToSave ~= "" or FileToSave ~= nil then 
+            UpdateFile(FileToSave)
+        end
+    end)
+end
+
+local SaveConfigurationBOX = GeneralTab:AddRightTabbox("Save Configuration") do 
+    local Main = SaveConfigurationBOX:AddTab("Save Configuration")
+    Main:AddDropdown("SaveConfigurationDropdown", {Values = GetFiles(), Text = "Choose Configuration to Save"})
+    Main:AddButton("Save Configuration", function()
+        if Options.SaveConfigurationDropdown.Value then 
+            UpdateFile(Options.SaveConfigurationDropdown.Value)
+        end
+    end)
+end
+
+local LoadConfigurationBOX = GeneralTab:AddRightTabbox("Load Configuration") do 
+    local Main = LoadConfigurationBOX:AddTab("Load Configuration")
+    
+    Main:AddDropdown("LoadConfigurationDropdown", {Values = GetFiles(), Text = "Choose Configuration to Load"})
+    Main:AddButton("Load Configuration", function()
+        if table.find(GetFiles(), Options.LoadConfigurationDropdown.Value) then
+            LoadFile(Options.LoadConfigurationDropdown.Value)
+            
+            Toggles.TeamCheck:SetValue(SilentAimSettings.TeamCheck)
+            Toggles.VisibleCheck:SetValue(SilentAimSettings.VisibleCheck)
+            Options.TargetPart:SetValue(SilentAimSettings.TargetPart)
+            Options.Method:SetValue(SilentAimSettings.SilentAimMethod)
+            Toggles.Visible:SetValue(SilentAimSettings.FOVVisible)
+            Options.Radius:SetValue(SilentAimSettings.FOVRadius)
+            Toggles.MousePosition:SetValue(SilentAimSettings.ShowSilentAimTarget)
+            Toggles.Prediction:SetValue(SilentAimSettings.MouseHitPrediction)
+            Options.Amount:SetValue(SilentAimSettings.MouseHitPredictionAmount)
+            Options.HitChance:SetValue(SilentAimSettings.HitChance)
+        end
     end)
 end
 
